@@ -1,16 +1,21 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+const pool = require('../config/db');
 
-const User = sequelize.define('User', {
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true
-  },
-  token: {
-    type: DataTypes.STRING,
-    allowNull: true
+const createUser = async (email, password) => {
+  try {
+    const result = await pool.query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *', [email, password]);
+    return result.rows[0];
+  } catch (err) {
+    throw new Error(err.message);
   }
-});
+};
 
-module.exports = User;
+const getUserByEmail = async (email) => {
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    return result.rows[0];
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+module.exports = { createUser, getUserByEmail };

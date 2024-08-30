@@ -1,12 +1,11 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000;
-const authRoutes = require('./routes/authRoutes');
+const config = require('./config/config');
+const routes = require('./src/routes');
 
 app.use(express.json());
+app.use('/api', routes);
 
-app.use('/api/auth', authRoutes);
-
-app.listen(port, () => {
-  console.log(`Backend running at http://localhost:${port}`);
+app.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`);
 });
